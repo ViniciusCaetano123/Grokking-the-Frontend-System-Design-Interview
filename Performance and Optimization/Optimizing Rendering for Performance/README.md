@@ -118,7 +118,7 @@ Para otimizar um carrossel que se move (animações com `transform`):
 
 Essa abordagem garante que as animações de deslizamento sejam suaves e eficientes, usando o poder da GPU apenas onde é realmente necessário.
 
-![Optimized image carousel using layer promotion](img/Network%20performance%20waterfall%20chart.png)
+![Optimized image carousel using layer promotion](img/Optimized%20image%20carousel%20using%20layer%20promotion.png)
 
 Excelente! A escolha da estratégia de renderização é um pilar crucial na otimização de performance. Vou resumir as estratégias de **Client-Side Rendering (CSR)** e **Server-Side Rendering (SSR)** e as soluções modernas como **SSG** e **ISR**.
 
@@ -168,4 +168,33 @@ O ISR resolve a principal limitação do SSG (a necessidade de reconstruir o _si
 
 Essas técnicas híbridas são a chave para atingir o máximo desempenho e escalabilidade nas aplicações web modernas.
 
-![Client-side vs. server-side rendering optimization](img/Network%20performance%20waterfall%20chart.png)
+![Client-side vs. server-side rendering optimization](img/Client-side%20vs.%20server-side%20rendering%20optimization.png)
+
+Não se trata apenas de escolher entre CSR e SSR. Aplicativos inteligentes combinam estratégias, usando a ferramenta certa para cada tarefa. Cada abordagem de renderização tem seus pontos fortes e fracos, então como alcançar o equilíbrio ideal? Uma estratégia híbrida aplica a técnica correta onde necessário, combinando CSR para interatividade, SSR para carregamentos iniciais mais rápidos, SSG para velocidade em aplicações pré-construídas e ISR para atualizações dinâmicas. Isso garante uma combinação ideal de desempenho, escalabilidade e experiência do usuário.
+
+Imagine que sua equipe lança uma página de destino dinâmica para um produto, construída inteiramente com renderização do lado do cliente usando React. Ela inclui animações e conteúdo personalizado carregado após o carregamento da página. Semanas depois, o departamento de marketing percebe que a página não está aparecendo nos resultados de busca e o tráfego orgânico está baixo.
+
+Qual escolha de renderização provavelmente causou esse problema de SEO e como você poderia corrigi-lo sem perder a interatividade?
+
+Com certeza! Organizar essas informações em uma tabela facilita a visualização dos problemas, suas causas e as soluções de otimização correspondentes.
+
+## 📊 Otimização de Renderização: Problemas, Causas e Soluções
+
+| Problema (Emitir)                           | Causa                                                                   | Técnica de Otimização                                                                                                                                  |
+| :------------------------------------------ | :---------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tamanho DOM grande**                      | Muitos nós, aninhamento profundo.                                       | Reduza a complexidade do DOM, use `documentFragment` para manipulações.                                                                                |
+| **Destruição de layout (Layout Thrashing)** | Atualizações frequentes do DOM.                                         | Atualizações em lote usando `requestAnimationFrame` (para animações/visuais) ou leitura/escrita em bloco.                                              |
+| **Carga inicial lenta**                     | HTML grande e profundamente aninhado.                                   | Reduza a profundidade do DOM, use elementos semânticos.                                                                                                |
+| **Análise lenta de CSS**                    | Seletores complexos, folhas de estilo extensas.                         | Use seletores simples (baseados em classe), evite aninhamento excessivo.                                                                               |
+| **Repinturas excessivas**                   | Uso excessivo de efeitos CSS (`box-shadow`, `filter`).                  | Use `will-change` (com moderação), utilize estilos minimalistas e evite excesso de peso (`overdraw`).                                                  |
+| **Execução desnecessária de JS**            | Excesso de JS não utilizado.                                            | Utilize divisão de código (code splitting) e importações dinâmicas.                                                                                    |
+| **Recursos que bloqueiam a renderização**   | CSS/JS síncrono.                                                        | Carregue os _scripts_ com `async` / `defer`, otimize e inlinhe o CSS crítico (Critical CSS).                                                           |
+| **Execução pesada de JS**                   | _Scripts_ de longa duração.                                             | Use `async` / `defer` para minimizar o bloqueio da _thread_ principal e use Web Workers para tarefas complexas.                                        |
+| **Composição ineficiente**                  | Muitas camadas, contextos sobrepostos.                                  | Otimize a sobreposição de camadas, use `transform` e `opacity` para animações (aceleração por GPU).                                                    |
+| **Uso excessivo de camadas da GPU**         | Aceleração de hardware excessiva (uso indiscriminado de `will-change`). | Utilize `translateZ(0)` ou `will-change` e promova **apenas** as camadas estritamente necessárias.                                                     |
+| **Bloquear scripts de terceiros**           | Anúncios com carregamento lento, _scripts_ de análise.                  | Carregar _scripts_ de forma assíncrona ou por meio de _Service Workers_.                                                                               |
+| **Renderização SPA lenta**                  | Renderização excessiva no lado do cliente (CSR).                        | Utilize **SSR**, **SSG** e **ISR** onde for necessário para fornecer conteúdo inicial rapidamente.                                                     |
+| **Renderização de listas ineficiente**      | Listas extensas tornam a interface do usuário mais lenta.               | Utilize virtualização de listas (por exemplo, `react-window` ou `vue-virtual-scroller`).                                                               |
+| **Fontes não otimizadas**                   | Arquivos de fontes grandes, muitas variações de peso.                   | Use `font-display: swap` para garantir que o texto seja exibido rapidamente, utilize fontes de subconjunto (subsetting) e formatos modernos (`woff2`). |
+
+Posso detalhar qualquer uma dessas técnicas, como a virtualização de listas ou o uso de `documentFragment`, se desejar!
